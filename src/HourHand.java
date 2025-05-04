@@ -1,19 +1,21 @@
 import java.time.LocalTime;
+import java.util.Locale;
 
-public class HourHand extends ClockHand {
-    private double angle;
+public class HourHand extends ClockHand
+{
+    int y=-50;
+    String color="black";
+    int width=4;
+    double angle;
 
-    @Override
-    public void setTime(LocalTime time) {
-        this.angle = (time.getHour() % 12) * 30 + time.getMinute() * 0.5; // 360 stopni / 12 godzin
+    public void setTime(LocalTime time)
+    {
+        this.time=time;
+        angle=(time.getMinute()+(time.getMinute()/60)+(time.getSecond()/3600))*15;
     }
-
     @Override
-    public String toSvg() {
-        return String.format(
-            "<line x1=\"100\" y1=\"100\" x2=\"100\" y2=\"40\" stroke=\"black\" stroke-width=\"4\" transform=\"rotate(%f, 100, 100)\"/>",
-            angle
-        );
+    public String toSvg(String param)
+    {
+        return super.toSvg(String.format(Locale.ENGLISH, "y2=\"%d\" stroke=\"%s\" stroke-width=\"%d\" transform=\"rotate(%f)\"",y,color,width,angle));
     }
 }
-
