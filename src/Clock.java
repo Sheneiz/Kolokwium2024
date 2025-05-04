@@ -1,46 +1,64 @@
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
-    public abstract class Clock {
-        private int hour;
-        private int minute;
-        private int second;
+public abstract class Clock
+{
+    LocalTime time;
+    City city;
 
-        public void setCurrentTime() {
-            LocalTime now = LocalTime.now();
-            this.hour = now.getHour();
-            this.minute = now.getMinute();
-            this.second = now.getSecond();
+    public Clock(City c)
+    {
+        this.city=c;
+    }
+
+    public void setCity(City city) {
+        double timezone=this.city.timezone;
+        this.city = city;
+        timezone=this.city.timezone-timezone;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        int hour= (int) (time.getHour()+timezone);
+        if(hour>23)
+        {
+            hour-=24;
         }
+        String SH= hour <10 ? String.format("0%d",hour): String.format("%d",hour);
+        String SM=time.getMinute() <10 ? String.format("0%d",time.getMinute()): String.format("%d",time.getMinute());
+        String SS=time.getSecond()<10 ? String.format("0%d",time.getSecond()): String.format("%d",time.getSecond());
+        time = LocalTime.from(formatter.parse(String.format("%s:%s:%s",SH,SM,SS)));
+        //time = LocalTime.from(formatter.parse(String.format("%d:%d:%d",hour , time.getMinute(), time.getSecond())));
+    }
 
-        public void setTime(int hour, int minute, int second) {
-            if (hour < 0 || hour > 23) {
-                throw new IllegalArgumentException("Hour must be between 0 and 23.");
+    public void setCurrentTime()
+    {
+        time= LocalTime.now();
+    }
+    public void setTime(int hour, int minute, int second)
+    {
+        try
+        {
+           if(hour>23 || hour<0)
+           {
+               throw new IllegalArgumentException(String.format(Locale.ENGLISH,"%s nie jest wlasciwa wartoscia dla godzin"));
+           }
+            if(minute>60 || minute<0)
+            {
+                throw new IllegalArgumentException(String.format(Locale.ENGLISH,"%s nie jest wlasciwa wartoscia dla minut"));
             }
-            if (minute < 0 || minute > 59) {
-                throw new IllegalArgumentException("Minute must be between 0 and 59.");
+            if(second>60 || second<0)
+            {
+                throw new IllegalArgumentException(String.format(Locale.ENGLISH,"%s nie jest wlasciwa wartoscia dla sekund"));
             }
-            if (second < 0 || second > 59) {
-                throw new IllegalArgumentException("Second must be between 0 and 59.");
-            }
-            this.hour = hour;
-            this.minute = minute;
-            this.second = second;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("%02d:%02d:%02d", hour, minute, second);
-        }
-
-        protected int getHour() {
-            return hour;
-        }
-
-        protected int getMinute() {
-            return minute;
-        }
-
-        protected int getSecond() {
-            return second;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            time = LocalTime.from(formatter.parse(String.format("%d:%d:%d",hour, minute, second)));
+        }catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
         }
     }
+
+    @Override
+    public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        return time.format(formatter);
+    }
+}

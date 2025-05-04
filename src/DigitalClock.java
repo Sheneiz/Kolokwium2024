@@ -1,24 +1,18 @@
-public class DigitalClock extends Clock {
-    public enum Mode {
-        TWENTY_FOUR_HOUR, TWELVE_HOUR
+public class DigitalClock extends Clock
+{
+    boolean mode =true; //true - 24h
+
+
+    public DigitalClock(City city, boolean mode) {
+        super(city);
+        this.mode=mode;
     }
-
-    private final Mode mode;
-
-    public DigitalClock(Mode mode) {
-        this.mode = mode;
-    }
-
     @Override
     public String toString() {
-        if (mode == Mode.TWENTY_FOUR_HOUR) {
+        if(mode)
+        {
             return super.toString();
-        } else {
-            int hour = getHour();
-            String period = hour < 12 ? "AM" : "PM";
-            hour = hour % 12;
-            if (hour == 0) hour = 12;
-            return String.format("%d:%02d:%02d %s", hour, getMinute(), getSecond(), period);
         }
+        return String.format("%d:%d:%d %s", time.getHour()>11 ? time.getHour()-12 : time.getHour(), time.getMinute(), time.getSecond(), time.getHour()>11 ? "PM" : "AM");
     }
 }
